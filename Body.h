@@ -13,6 +13,7 @@ class Body{
 		double x,y;
 		double vx,vy;
 		double fx,fy;
+		double ax,ay;
 		double mass;
 
 		Body(double x,double y,double vx,double vy, double mass);

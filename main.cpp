@@ -6,6 +6,7 @@
 #include <stdlib.h>     /* srand, rand */      
 
 #include "Body.h"
+#include "StartSimulation.h"
 
 #define GRIDSIDES 1000
 #define NUMBODY 10

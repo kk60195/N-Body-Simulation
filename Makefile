@@ -1,4 +1,4 @@
-OBJS = main.o Body.o
+OBJS = main.o Body.o StartSimulation.o
 CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c $(DEBUG)
@@ -11,6 +11,9 @@ main: $(OBJS)
 
 Body.o : Body.h Body.cpp
 	$(CC) $(CFLAGS) Body.cpp
+
+StartSimulation.o : StartSimulation.h StartSimulation.cpp
+	$(CC) $(CFLAGS) StartSimulation.cpp
 
 
 clean:
