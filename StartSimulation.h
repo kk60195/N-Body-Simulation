@@ -1,28 +1,31 @@
 #ifndef	STARTSIMULATION_H
 #define STARTSIMULATION_H
 
-#include <iostream>
-#include <string>
-#include <time.h> 
-#include <stdio.h>      /* printf, scanf, puts, NULL */
-#include <stdlib.h>     /* srand, rand */      
-
 #include "Body.h"
 
+#include <vector>
 
-using namespace std;
+#include <stdlib.h>
 
 
-class Start{
-private:
+
+
+
+class StartSimulation{
+
+protected:
 	
 	int numOfBodies;
 
+	std::vector<Body> myBodies;
+	
+	void run();
+
 public:
-	//StartSimulation();
+	StartSimulation(int count);
 	//StartSimulation(int count);
 	//void showBodies();
-
+	
 
 
 
