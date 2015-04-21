@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#define TIMETORUN 10;
+#define TIMETORUN 50
 
 
 	
@@ -25,9 +25,14 @@ StartSimulation::StartSimulation(int count){
 	time_t seconds;
 	time(&seconds);
 	srand((unsigned int) seconds);
+
+
 	
 	//temporary
 	Body *myList [count];
+
+	//this->myBodies = myList[0];
+
 
 	for(i = 0; i < count; i++){
 
@@ -37,19 +42,27 @@ StartSimulation::StartSimulation(int count){
 
 		myList[i] = new Body(ina,inb,0.0,0.0,inc);
 		
+		//error here
+		myBodies[i] = myList[i];
+
 		printf("%d) ",i + 1);
 		myList[i]->toString();
-
-
-		myBodies.push_back(myList[i]);
-		//(Body*)(BodyList + i) = new Body(ina,inb,0.0,0.0,inc);
+		
 	}
-	//this->myBodies[] = new Body[count];
+	
 	
 	printf("\nInitialize Bodies done!\n");
 
+
 	//start timestep
-	//this->run();
+	
+	for(i = 0; i < TIMETORUN ; i++){
+
+	this->run();
+
+	}
+
+	delete [] myBodies;
 
 
 }
@@ -59,24 +72,31 @@ void StartSimulation::run(){
 	int i,j,count;
 	count = 0;
 	for(i = 0 ; i < this->numOfBodies ; i++){
-		//this->myBodies[i]->resetForce();
-		for(j = 0 ; j< this->numOfBodies ; j++){
-			if(i!=j){
-			//this->myBodies[i]->addForce(*this->myBodies[j]);
-			count++;
-		}
-		}
 
+		this->myBodies[i]->resetForce();
+		
+		for(j = 0 ; j< this->numOfBodies ; j++){
+
+			if(i!=j){
+			this->myBodies[i]->addForce(*this->myBodies[j]);
+			count++;
+			}
+
+		}
+		//myBodies[i]->toString();
 		
 	}
-	//myBodies[1]->toString();
-	printf("\ncount ran for: %d\n", count);
 
-	//for(i = 0; i < this-> numOfBodies ; i++){
-	//	this->myBodies[i].update(1);
-	//	myBodies[i].toString();
-	//}
+	
 
+	
+	//printf("\ncount ran for: %d\n", count);
+	
+	for(i = 0; i < this-> numOfBodies ; i++){
+		this->myBodies[i]->update(1);
+		myBodies[1]->toString();
+	}
+	
 
 
 

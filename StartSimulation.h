@@ -9,23 +9,19 @@
 
 
 
-
-
 class StartSimulation{
 
 protected:
 	
 	int numOfBodies;
 
-	std::vector<Body> myBodies;
+	Body *myBodies[];
 	
 	void run();
 
 public:
 	StartSimulation(int count);
-	//StartSimulation(int count);
-	//void showBodies();
-	
+
 
 
 
