@@ -9,6 +9,12 @@
 
 using namespace std;
 
+	Body::Body(){
+		this->x = 0;
+		this->y = 0;
+		this->mass = 0;
+
+	}
 	Body::Body(double x,double y,double vx,double vy, double mass){
 		this->x = x;
 		this->y = y;

@@ -17,6 +17,7 @@ class Body{
 		double mass;
 		double Force;
 
+		Body();
 		Body(double x,double y,double vx,double vy, double mass);
 		void update(double time);
 		double distanceTo(Body b);

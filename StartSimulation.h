@@ -15,9 +15,10 @@ protected:
 	
 	int numOfBodies;
 
-	Body *myBodies[];
+	Body *myBodies;
 	
 	void run();
+	void draw();
 
 public:
 	StartSimulation(int count);

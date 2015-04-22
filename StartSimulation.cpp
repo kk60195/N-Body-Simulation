@@ -1,5 +1,6 @@
 #include "StartSimulation.h"
 #include "Body.h"
+#include <GL/glut.h>
 
 #include <string>
 #include <time.h> 
@@ -17,6 +18,8 @@ using namespace std;
 
 StartSimulation::StartSimulation(int count){
 
+
+
 	//Body *myBodies[256];
 	this->numOfBodies = count;
 
@@ -32,7 +35,7 @@ StartSimulation::StartSimulation(int count){
 	Body *myList [count];
 
 	//this->myBodies = myList[0];
-
+	myBodies = new Body[count];
 
 	for(i = 0; i < count; i++){
 
@@ -41,14 +44,16 @@ StartSimulation::StartSimulation(int count){
 		inc = rand()%1000;//mass
 
 		myList[i] = new Body(ina,inb,0.0,0.0,inc);
-		
+	
+
 		//error here
-		myBodies[i] = myList[i];
+		this->myBodies[i] = *myList[i];
 
 		printf("%d) ",i + 1);
 		myList[i]->toString();
 		
 	}
+	
 	
 	
 	printf("\nInitialize Bodies done!\n");
@@ -62,7 +67,12 @@ StartSimulation::StartSimulation(int count){
 
 	}
 
-	delete [] myBodies;
+    for (i = 0; i < count; i++)
+    {
+        //delete myBodies[i];
+        myBodies[i].toString();
+        delete myList[i];
+    }
 
 
 }
@@ -71,19 +81,20 @@ void StartSimulation::run(){
 
 	int i,j,count;
 	count = 0;
+	
 	for(i = 0 ; i < this->numOfBodies ; i++){
 
-		this->myBodies[i]->resetForce();
+		this->myBodies[i].resetForce();
 		
 		for(j = 0 ; j< this->numOfBodies ; j++){
 
 			if(i!=j){
-			this->myBodies[i]->addForce(*this->myBodies[j]);
+			this->myBodies[i].addForce(this->myBodies[j]);
 			count++;
 			}
 
 		}
-		//myBodies[i]->toString();
+		myBodies[i].toString();
 		
 	}
 
@@ -93,8 +104,8 @@ void StartSimulation::run(){
 	//printf("\ncount ran for: %d\n", count);
 	
 	for(i = 0; i < this-> numOfBodies ; i++){
-		this->myBodies[i]->update(1);
-		myBodies[1]->toString();
+		//this->myBodies[i]->update(1);
+		myBodies[1].toString();
 	}
 	
 
