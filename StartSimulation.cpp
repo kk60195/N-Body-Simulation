@@ -69,8 +69,6 @@ StartSimulation::StartSimulation(int count){
 
     for (i = 0; i < count; i++)
     {
-        //delete myBodies[i];
-        myBodies[i].toString();
         delete myList[i];
     }
 
@@ -94,7 +92,6 @@ void StartSimulation::run(){
 			}
 
 		}
-		myBodies[i].toString();
 		
 	}
 
@@ -104,7 +101,7 @@ void StartSimulation::run(){
 	//printf("\ncount ran for: %d\n", count);
 	
 	for(i = 0; i < this-> numOfBodies ; i++){
-		//this->myBodies[i]->update(1);
+		this->myBodies[i].update(1);
 		myBodies[1].toString();
 	}
 	
