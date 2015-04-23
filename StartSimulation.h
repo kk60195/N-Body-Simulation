@@ -22,6 +22,7 @@ protected:
 
 public:
 	StartSimulation(int count);
+	Body GetBody(int place);
 
 
 

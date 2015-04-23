@@ -39,8 +39,8 @@ StartSimulation::StartSimulation(int count){
 
 	for(i = 0; i < count; i++){
 
-		ina = rand()%1000;//x
-		inb = rand()%1000;//y
+		ina = rand()%600;//x
+		inb = rand()%600;//y
 		inc = rand()%1000;//mass
 
 		myList[i] = new Body(ina,inb,0.0,0.0,inc);
@@ -63,14 +63,14 @@ StartSimulation::StartSimulation(int count){
 	
 	for(i = 0; i < TIMETORUN ; i++){
 
-	this->run();
+	//this->run();
 
 	}
 
-    for (i = 0; i < count; i++)
-    {
-        delete myList[i];
-    }
+   // for (i = 0; i < count; i++)
+    //{
+    //    delete myList[i];
+    //}
 
 
 }
@@ -108,6 +108,12 @@ void StartSimulation::run(){
 
 
 
+
+}
+
+Body StartSimulation::GetBody(int i){
+
+	return this->myBodies[i];
 
 }
 
