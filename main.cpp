@@ -12,8 +12,8 @@
 #include <GL/glut.h>
 
 #define GRIDSIDES 1000
-#define NUMBODY 100
-#define MAXMASS 20
+#define NUMBODY 200
+#define MAXMASS 200
 #define GalaxyX 600
 #define GalaxyY 500
 #define CORRMIN -500
@@ -59,10 +59,14 @@ void crunch(){
 
         //printf("\nx:%.2f y:%.2f",pt.x,pt.y);
 
-        pt.r = 200;//rand() % 255;
-        pt.g = 200;//rand() % 255;
-        pt.b = 200;//rand() % 255;
+        //pt.r = 200;//rand() % 255;
+        //pt.g = 200;//rand() % 255;
+        //pt.b = 200;//rand() % 255;
+        pt.r = Galaxy.GetBody(i).r;
+        pt.g = Galaxy.GetBody(i).g;
+        pt.b = Galaxy.GetBody(i).b;
         pt.a = 255;
+
         points.push_back(pt);
     }        
 
@@ -101,6 +105,7 @@ void display(void)
     glDrawArrays( GL_POINTS, 0, points.size() );
     glDisableClientState( GL_VERTEX_ARRAY );
     glDisableClientState( GL_COLOR_ARRAY );
+
 
     glFlush();
     glutSwapBuffers();
@@ -144,17 +149,19 @@ int main(int argc, char** argv)
         Point pt;
         pt.x = Galaxy.GetBody(i).x;
         pt.y = Galaxy.GetBody(i).y;
-        pt.r = 100;//rand() % 255;
-        pt.g = 10;//rand() % 255;
-        pt.b = 10;rand() % 255;
+        pt.r = Galaxy.GetBody(i).r;
+        pt.g = Galaxy.GetBody(i).g;
+        pt.b = Galaxy.GetBody(i).b;
         pt.a = 255;
         points.push_back(pt);
     }    
 	
-    //glutMainLoop();
+    
 
     glutIdleFunc(display);
 
 	glutMainLoop();
+
+
 	return 0;
 }

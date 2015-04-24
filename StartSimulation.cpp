@@ -77,21 +77,26 @@ StartSimulation::StartSimulation(int count){
 
 void StartSimulation::run(){
 
-	int i,j,count;
-	count = 0;
+	int i,j;
 	
 	for(i = 0 ; i < this->numOfBodies ; i++){
 
 		this->myBodies[i].resetForce();
 		
+		
 		for(j = 0 ; j< this->numOfBodies ; j++){
 
 			if(i!=j){
 			this->myBodies[i].addForce(this->myBodies[j]);
-			count++;
+			
 			}
 
 		}
+		printf("\n1)");
+		myBodies[0].toString();
+		printf("\n2)");
+		myBodies[1].toString();
+
 		
 	}
 
@@ -102,7 +107,7 @@ void StartSimulation::run(){
 	
 	for(i = 0; i < this-> numOfBodies ; i++){
 		this->myBodies[i].update(1);
-		//myBodies[1].toString();
+		
 	}
 	
 

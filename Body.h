@@ -16,6 +16,8 @@ class Body{
 		double ax,ay;
 		double mass;
 		double Force;
+		unsigned char r,g,b;
+		int AddCount;
 
 		Body();
 		Body(double x,double y,double vx,double vy, double mass);
