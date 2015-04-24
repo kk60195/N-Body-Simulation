@@ -12,10 +12,12 @@
 #include <GL/glut.h>
 
 #define GRIDSIDES 1000
-#define NUMBODY 5
+#define NUMBODY 100
 #define MAXMASS 20
 #define GalaxyX 600
 #define GalaxyY 500
+#define CORRMIN -500
+#define CORRMAX  500
 
 using namespace std;
 
@@ -39,6 +41,8 @@ void reshape(int w, int h)
 
 void crunch(){
 
+    Galaxy.run();
+
  for( size_t i = 0; i < NUMBODY; ++i )
     {
         points.pop_back();
@@ -48,15 +52,16 @@ void crunch(){
     {
         
         Point pt;
-       pt.x = -50 + (rand() % 100);
-       pt.y = -50 + (rand() % 100);
-        pt.x = Galaxy.GetBody(i).x;
-        pt.y = Galaxy.GetBody(i).y;
+       //pt.x = -50 + (rand() % 100);
+       //pt.y = -50 + (rand() % 100);
+       pt.x =  CORRMIN + Galaxy.GetBody(i).x;
+       pt.y =  CORRMIN + Galaxy.GetBody(i).y;
 
-        printf("\nx:%.2f y:%.2f",pt.x,pt.y);
-        pt.r = 100;//rand() % 255;
-        pt.g = 100;//rand() % 255;
-        pt.b = 100;//rand() % 255;
+        //printf("\nx:%.2f y:%.2f",pt.x,pt.y);
+
+        pt.r = 200;//rand() % 255;
+        pt.g = 200;//rand() % 255;
+        pt.b = 200;//rand() % 255;
         pt.a = 255;
         points.push_back(pt);
     }        
@@ -75,11 +80,13 @@ void display(void)
     
      crunch();
 
+     //Galaxy.run();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-500, 500, -500, 500, -1, 1);
+    glOrtho(CORRMIN,CORRMAX,CORRMIN,CORRMAX, -1, 1);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -90,7 +97,7 @@ void display(void)
     glEnableClientState( GL_COLOR_ARRAY );
     glVertexPointer( 2, GL_FLOAT, sizeof(Point), &points[0].x );
     glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(Point), &points[0].r );
-    glPointSize( 3.0 );
+    glPointSize( 5.0 );
     glDrawArrays( GL_POINTS, 0, points.size() );
     glDisableClientState( GL_VERTEX_ARRAY );
     glDisableClientState( GL_COLOR_ARRAY );
@@ -130,6 +137,7 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
 
+    
      // populate points
     for( size_t i = 0; i < NUMBODY; ++i )
     {

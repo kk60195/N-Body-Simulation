@@ -102,7 +102,7 @@ void StartSimulation::run(){
 	
 	for(i = 0; i < this-> numOfBodies ; i++){
 		this->myBodies[i].update(1);
-		myBodies[1].toString();
+		//myBodies[1].toString();
 	}
 	
 

@@ -17,13 +17,13 @@ protected:
 
 	Body *myBodies;
 	
-	void run();
+	//void run();
 	void draw();
 
 public:
 	StartSimulation(int count);
 	Body GetBody(int place);
-
+	void run();
 
 
 
