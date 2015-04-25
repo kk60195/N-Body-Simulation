@@ -14,7 +14,7 @@
 
 
 #define GRIDSIDES 1000
-#define NUMBODY 300  //number of stars generated
+#define NUMBODY 200 //number of stars generated
 #define MAXMASS 200 // max mass a body cna get
 #define GalaxyX 1200 //0 to boundry
 #define GalaxyY 1000 // 0 to boundry
@@ -36,9 +36,10 @@ struct Point
 
 std::vector< Point > points;
 
-StartSimulation Galaxy(NUMBODY,GalaxyX,GalaxyY);
+StartSimulation *GalaxyPtr;
 
 int algorithmChoice; //0:brute 1:QuadTree
+int ManualNumBody;
 
 void reshape(int w, int h)
 {
@@ -48,7 +49,7 @@ void reshape(int w, int h)
 
 void crunch(){
 
-    Galaxy.run(algorithmChoice);
+    GalaxyPtr->run(algorithmChoice);
 
  for( size_t i = 0; i < NUMBODY; ++i )
     {
@@ -61,14 +62,14 @@ void crunch(){
         Point pt;
        //pt.x = -50 + (rand() % 100);
        //pt.y = -50 + (rand() % 100);
-       pt.x =  CORRMIN + Galaxy.GetBody(i).x;
-       pt.y =  CORRMIN + Galaxy.GetBody(i).y;
+       pt.x =  CORRMIN + GalaxyPtr->GetBody(i).x;
+       pt.y =  CORRMIN + GalaxyPtr->GetBody(i).y;
 
         //printf("\nx:%.2f y:%.2f",pt.x,pt.y);
 
-        pt.r = Galaxy.GetBody(i).r;
-        pt.g = Galaxy.GetBody(i).g;
-        pt.b = Galaxy.GetBody(i).b;
+        pt.r = GalaxyPtr->GetBody(i).r;
+        pt.g = GalaxyPtr->GetBody(i).g;
+        pt.b = GalaxyPtr->GetBody(i).b;
         pt.a = 255;
 
         points.push_back(pt);
@@ -119,9 +120,6 @@ void display(void)
 
     glDrawArrays( GL_POINTS, 0, points.size() );
 
-
-
-
     glDisableClientState( GL_VERTEX_ARRAY );
     glDisableClientState( GL_COLOR_ARRAY );
 
@@ -147,6 +145,15 @@ int main(int argc, char** argv)
     algorithmChoice = 0;
 
     }
+    if(argc >= 2){
+        ManualNumBody = atoi( argv[2] );
+    }
+    else{
+
+        ManualNumBody = 200;
+    }
+
+    GalaxyPtr = new StartSimulation(ManualNumBody,GalaxyX,GalaxyY);
     
 	
 	glutInit(&argc, argv);
@@ -163,11 +170,11 @@ int main(int argc, char** argv)
     for( size_t i = 0; i < NUMBODY; ++i )
     {
         Point pt;
-        pt.x = Galaxy.GetBody(i).x;
-        pt.y = Galaxy.GetBody(i).y;
-        pt.r = Galaxy.GetBody(i).r;
-        pt.g = Galaxy.GetBody(i).g;
-        pt.b = Galaxy.GetBody(i).b;
+        pt.x = GalaxyPtr->GetBody(i).x;
+        pt.y = GalaxyPtr->GetBody(i).y;
+        pt.r = GalaxyPtr->GetBody(i).r;
+        pt.g = GalaxyPtr->GetBody(i).g;
+        pt.b = GalaxyPtr->GetBody(i).b;
         pt.a = 255;
         points.push_back(pt);
     }    
