@@ -4,7 +4,7 @@
 #include <string> 
 
 #include "QuadNode.h"
-#define THETA 1
+#define THETA 0.1
 
 
 

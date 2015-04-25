@@ -14,7 +14,7 @@
 
 
 #define GRIDSIDES 1000
-#define NUMBODY 200  //number of stars generated
+#define NUMBODY 300  //number of stars generated
 #define MAXMASS 200 // max mass a body cna get
 #define GalaxyX 1200 //0 to boundry
 #define GalaxyY 1000 // 0 to boundry
@@ -100,7 +100,7 @@ void setupGL(){
     
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    glPointSize( 4.0 );
+    glPointSize( 5.0 );
 
 }
 
@@ -142,8 +142,6 @@ int main(int argc, char** argv)
     if (argc > 1)
     {   
     algorithmChoice = atoi( argv[1] );
-
-    
     }
     else{
     algorithmChoice = 0;

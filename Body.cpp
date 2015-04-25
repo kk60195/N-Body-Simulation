@@ -8,8 +8,6 @@
 #include <stdlib.h>     /* srand, rand, abs */   
 
 
-#define SOFT 10E11
-
 using namespace std;
 
 	Body::Body(){
@@ -23,6 +21,7 @@ using namespace std;
 
 	}
 	Body::Body(double x,double y,double vx,double vy, double mass){
+
 		this->x = x;
 		this->y = y;
 		this->mass = mass;
@@ -81,57 +80,19 @@ using namespace std;
      			count++;
      			if(count > this->AddCount) this->AddCount = count;
 
-
-
      			    double x_dist = this->x - b.x;
     				double y_dist = this->y - b.y;
-    				
-    
-   				 //calculate the distance between the two objects r^2 = x^2 + y^2 + z^2
-    				//double r_Squared = (x_dist*x_dist)  + (y_dist*y_dist);  
-    				//printf("\nr_squared = %.1f",r_Squared);
     		
     				double dist = this->distanceTo(b);
 
-
-
-    				
+    				    //threashhold zone
     					if(dist > 10){
+
     						Force = (  this->mass * b.mass )/ (dist* dist * this->AddCount);
     						this->fx -= Force * x_dist ;/// dist;
     						this->fy -= Force * y_dist ;/// dist;
-    					}
-    				//printf("\nforce = %.1f this->mass %.1f\n ",Force,this->mass);
-    				
 
-    				/*
-    				if(x_dist < 0)
-    				this->fx -= Force * x_dist ;/// dist;
-
-      				if(x_dist > 0)
-    				this->fx += Force * x_dist ;/// dist;
-    			    
-    			   
-    				if(y_dist < 0)
-    				this->fy -= Force * y_dist ;/// dist;
-
-    				if(y_dist > 0)
-    				this->fy += Force * y_dist ;/// dist;
-					*/
-					
-    				//printf("\nfx:%.1f fy: %.1f\n",this->fx,this->fy);
-
-    				//if(this->fx > 1800) this->fx = 1800;
-    				//if(this->fx < -1800) this->fx = -1800;
-    				//if(this->fy > 1800) this->fy = 1800;
-    				//if(this->fy < -1800) this->fy = -1800;
-
-    				  //printf("\nforces:%f %f", this->fx , this->fy);
-
-  
-    
-
-    			
+    					}		
 
 
 		}
@@ -149,41 +110,37 @@ void Body::calcForce(QuadNode* node){
     double h = node->ymax - node->ymin; //height of the quadnode
     double r = h/d;
     
-    if(d2< 60){
-        return;
+    if(d < 30){
+        
     }
-    if(!node->isactive){
-        return;
+    else if(!node->isactive){
+        
     }
-    if(node->isparent){
+
+    else if(node->isparent && r >= THETA){
         //printf("here\n");
-       if(r >= THETA)
-        {//We need to separate to four smaller nodes for this quadnode and calculate recursively
-            for(int i = 0; i < 4; i++){
-                if(node->myChildren[i]!=NULL){
-                    
+       ///We need to separate to four smaller nodes for this quadnode and calculate recursively
+
+         for(int i = 0; i < 4; i++){
+                if(node->myChildren[i]!=NULL)
                    this-> calcForce(node->myChildren[i]);
-                }
-            }
-         return;
-        }else{
-            //The condition that we can consider the quadnode as a whole when calculating force
-            this->fx += (dx/d)* (node->m * this->mass /(d2 * d2 *200));
-            this->fy += (dy/d)* (node->m * this->mass / ( d2 * d2 * 200));
-            return;
-        }
-    }else{ //The condition that we only have one body in the quadnode
+                
+            }         
+    }
+    else{ //The condition that we only have one body in the quadnode
         //printf("fx: %lf\n",this->fx);
-        this->fx =this->fx + (dx/d)* (node->m * this->mass /d2);
-        this->fy += (dy/d)* (node->m * this->mass /d2);  
-        return;      
+
+            this->fx += (dx)* (node->m * this->mass /(d2 * 2000));
+            this->fy += (dy)* (node->m * this->mass / (d2 * 2000));
+           
     }
     
 }
 
 void Body::calcPosition(double time){
-        this->vx = this->fx * time / this->mass;
-        this->vy = this->fy * time / this->mass;
+
+        this->vx += this->fx * time / this->mass;
+        this->vy += this->fy * time / this->mass;
 
         this->x += vx * time;
         this->y += vy * time;
