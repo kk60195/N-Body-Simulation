@@ -39,8 +39,8 @@ StartSimulation::StartSimulation(int count){
 
 	for(i = 0; i < count; i++){
 
-		ina = rand()%600;//x
-		inb = rand()%600;//y
+		ina = rand()%800;//x
+		inb = rand()%800;//y
 		inc = rand()%1000;//mass
 
 		myList[i] = new Body(ina,inb,0.0,0.0,inc);
@@ -83,7 +83,7 @@ void StartSimulation::run(){
 
 		this->myBodies[i].resetForce();
 		
-		
+
 		for(j = 0 ; j< this->numOfBodies ; j++){
 
 			if(i!=j){

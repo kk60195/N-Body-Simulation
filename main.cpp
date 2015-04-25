@@ -12,10 +12,10 @@
 #include <GL/glut.h>
 
 #define GRIDSIDES 1000
-#define NUMBODY 200
+#define NUMBODY 300
 #define MAXMASS 200
-#define GalaxyX 600
-#define GalaxyY 500
+#define GalaxyX 1000
+#define GalaxyY 1000
 #define CORRMIN -500
 #define CORRMAX  500
 
@@ -99,10 +99,20 @@ void display(void)
     glColor3ub( 255, 255, 255 );
     glEnableClientState( GL_VERTEX_ARRAY );
     glEnableClientState( GL_COLOR_ARRAY );
+    
     glVertexPointer( 2, GL_FLOAT, sizeof(Point), &points[0].x );
     glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(Point), &points[0].r );
+
+    glEnable( GL_POINT_SPRITE ); // GL_POINT_SPRITE_ARB if you're
+                                 // using the functionality as an extension.
+
+    glEnable( GL_POINT_SMOOTH );
+    glEnable( GL_BLEND );
+
     glPointSize( 5.0 );
+
     glDrawArrays( GL_POINTS, 0, points.size() );
+
     glDisableClientState( GL_VERTEX_ARRAY );
     glDisableClientState( GL_COLOR_ARRAY );
 

@@ -96,7 +96,7 @@ using namespace std;
 
 
     				if( r_Squared != 0){
-    					if(dist > 60){
+    					if(dist > 100){
     				Force = (  this->mass * b.mass )/ (dist* dist * this->AddCount);
     				
 
