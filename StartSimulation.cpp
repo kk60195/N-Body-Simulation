@@ -115,8 +115,8 @@ void StartSimulation::run(){
 	}
 	*/
 	int count = this->numOfBodies;
-	Body **converted = &myBodies;
-	TreeRun(count, converted, this->mytree);
+	this->convertedBodies = &myBodies;
+	TreeRun(count, this->myBodies, this->mytree);
 
 
 
@@ -129,11 +129,13 @@ Body StartSimulation::GetBody(int i){
 
 }
 
-void StartSimulation::TreeRun(int count, Body **myList, QuadNode *tree)
+void StartSimulation::TreeRun(int count, Body *myList, QuadNode *tree)
 {
 	tree->clearNode();
+	Body *tempList;
 	for(int i = 0 ; i < count ; i++){
-		tree->addBody(myList[i]);
+		tempList = &myList[i];
+		tree->addBody(tempList);
 		// printf("\nafter insert");
 		// myList[i]->toString();			
 	}
@@ -141,14 +143,14 @@ void StartSimulation::TreeRun(int count, Body **myList, QuadNode *tree)
 
 
 	for(int i = 0 ; i < count ; i++){
-		myList[i]->resetForce();
+		myList[i].resetForce();
 
-		myList[i]->calcForce(tree);
+		myList[i].calcForce(tree);
 		printf("\nafter calc");
 		//myList[i]->toString();
-		myList[i]->calcPosition(10);
-		myList[i]->toString();	
+		myList[i].calcPosition(10);
+		myList[i].toString();	
 	}
 
-
+	
 }

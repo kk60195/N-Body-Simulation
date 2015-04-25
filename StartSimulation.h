@@ -18,6 +18,7 @@ protected:
 
 	Body *myBodies;
 	QuadNode *mytree;
+	Body **convertedBodies;
 	
 	//void run();
 	void draw();
@@ -26,7 +27,7 @@ protected:
 public:
 	StartSimulation(int count,int x, int y);
 	Body GetBody(int place);
-	void TreeRun(int count, Body **myList, QuadNode *tree);
+	void TreeRun(int count, Body *myList, QuadNode *tree);
 	void run();
 
 
