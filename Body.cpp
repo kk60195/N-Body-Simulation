@@ -130,8 +130,8 @@ void Body::calcForce(QuadNode* node){
     else{ //The condition that we only have one body in the quadnode
         //printf("fx: %lf\n",this->fx);
 
-            this->fx += (dx)* (node->m * this->mass /(d2 * 2000));
-            this->fy += (dy)* (node->m * this->mass / (d2 * 2000));
+            this->fx += (dx/d)* (node->m * this->mass /(d2 * 200));
+            this->fy += (dy/d)* (node->m * this->mass / (d2 * 200));
            
     }
     
