@@ -33,24 +33,24 @@ using namespace std;
 	}
 
 	void Body::update(double time){
-		
+
+
+		//calculate velocity
 		this->vx += this->fx * time / this->mass;
 		this->vy += this->fy * time / this->mass;
 
-		//printf("\nvx %d", (vx * time) );
-
+		//apply velocity to a time step
 		this->x += vx * time;
 		this->y += vy * time;
 
-
-		//if(this->x > 6000) this-> x =6000;
-		//if(this->x < 0) this-> x = 0;
-		//if(this->y > 6000) this->y=6000;
-		//if(this->y < 0) this->y =0;
-		
 		}
 		double Body::distanceTo(Body b){
-			return 3;
+
+			double x_dist = this->x - b.x;
+    		double y_dist = this->y - b.y;
+    		double r_Squared = (x_dist*x_dist)  + (y_dist*y_dist); 
+    		double dist = sqrt(r_Squared);
+			return dist;
 		}
 		void Body::resetForce(){
 			this->fx= 0;
@@ -78,34 +78,31 @@ using namespace std;
      			if(this->fx == 0)
      				if(this->fy == 0)
      					count = 0;
-
      			count++;
-
      			if(count > this->AddCount) this->AddCount = count;
+
+
 
      			    double x_dist = this->x - b.x;
     				double y_dist = this->y - b.y;
     				
     
    				 //calculate the distance between the two objects r^2 = x^2 + y^2 + z^2
-    				double r_Squared = (x_dist*x_dist)  + (y_dist*y_dist);  
+    				//double r_Squared = (x_dist*x_dist)  + (y_dist*y_dist);  
     				//printf("\nr_squared = %.1f",r_Squared);
     		
-    				double dist = sqrt(r_Squared);
+    				double dist = this->distanceTo(b);
 
 
 
-    				if( r_Squared != 0){
-    					if(dist > 100){
-    				Force = (  this->mass * b.mass )/ (dist* dist * this->AddCount);
     				
-
-
-    				this->fx -= Force * x_dist ;/// dist;
-    				this->fy -= Force * y_dist ;/// dist;
+    					if(dist > 10){
+    						Force = (  this->mass * b.mass )/ (dist* dist * this->AddCount);
+    						this->fx -= Force * x_dist ;/// dist;
+    						this->fy -= Force * y_dist ;/// dist;
     					}
     				//printf("\nforce = %.1f this->mass %.1f\n ",Force,this->mass);
-    				}
+    				
 
     				/*
     				if(x_dist < 0)
@@ -143,3 +140,51 @@ using namespace std;
 			printf("Mass:%.1f\tPosition:%.1f,%.1f\tVelocity:%.1f,%.1f Force::%.1f,%.1f\n",this->mass, this->x,this->y,this->vx,this->vy,this->fx,this->fy);
 			
 		}
+
+void Body::calcForce(QuadNode* node){
+    double dx = node->mx - this->x;
+    double dy = node->my - this->y;
+    double d2 = dx * dx + dy * dy;
+    double d = sqrt(d2); //distance from quadnode's center to target body
+    double h = node->ymax - node->ymin; //height of the quadnode
+    double r = h/d;
+    
+    if(d2==0){
+        return;
+    }
+    if(!node->isactive){
+        return;
+    }
+    if(node->isparent){
+        //printf("here\n");
+       if(r >= THETA)
+        {//We need to separate to four smaller nodes for this quadnode and calculate recursively
+            for(int i = 0; i < 4; i++){
+                if(node->myChildren[i]!=NULL){
+                    
+                   this-> calcForce(node->myChildren[i]);
+                }
+            }
+         return;
+        }else{
+            //The condition that we can consider the quadnode as a whole when calculating force
+            this->fx += (dx/d)* (node->m * this->mass /d2);
+            this->fy += (dy/d)* (node->m * this->mass /d2);
+            return;
+        }
+    }else{ //The condition that we only have one body in the quadnode
+        //printf("fx: %lf\n",this->fx);
+        this->fx =this->fx + (dx/d)* (node->m * this->mass /d2);
+        this->fy += (dy/d)* (node->m * this->mass /d2);  
+        return;      
+    }
+    
+}
+
+void Body::calcPosition(double time){
+        this->vx = this->fx * time / this->mass;
+        this->vy = this->fy * time / this->mass;
+
+        this->x += vx * time;
+        this->y += vy * time;
+}

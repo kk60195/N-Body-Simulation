@@ -6,18 +6,20 @@
 #include <stdlib.h>     /* srand, rand */      
 #include <vector>
 #include <cstdlib>
+#include <math.h>
 
 #include "Body.h"
 #include "StartSimulation.h"
 #include <GL/glut.h>
 
+
 #define GRIDSIDES 1000
-#define NUMBODY 300
+#define NUMBODY 200
 #define MAXMASS 200
-#define GalaxyX 1000
+#define GalaxyX 1200
 #define GalaxyY 1000
-#define CORRMIN -500
-#define CORRMAX  500
+#define CORRMIN -800
+#define CORRMAX  800
 
 using namespace std;
 
@@ -31,7 +33,7 @@ struct Point
 
 std::vector< Point > points;
 
-StartSimulation Galaxy(NUMBODY);
+StartSimulation Galaxy(NUMBODY,GalaxyX,GalaxyY);
 
 void reshape(int w, int h)
 {
@@ -59,9 +61,6 @@ void crunch(){
 
         //printf("\nx:%.2f y:%.2f",pt.x,pt.y);
 
-        //pt.r = 200;//rand() % 255;
-        //pt.g = 200;//rand() % 255;
-        //pt.b = 200;//rand() % 255;
         pt.r = Galaxy.GetBody(i).r;
         pt.g = Galaxy.GetBody(i).g;
         pt.b = Galaxy.GetBody(i).b;
@@ -72,19 +71,7 @@ void crunch(){
 
 }
 
-void display(void)
-{
-
-
-    int count;
-
-    //Galaxy = new StartSimulation(5);
-
-   // StartSimulation s1(5);
-    
-     crunch();
-
-     //Galaxy.run();
+void setupGL(){
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -99,28 +86,43 @@ void display(void)
     glColor3ub( 255, 255, 255 );
     glEnableClientState( GL_VERTEX_ARRAY );
     glEnableClientState( GL_COLOR_ARRAY );
+
+    //smooth
+ 
+
+    glEnable( GL_POINT_SMOOTH );
+    glEnable( GL_BLEND );
+    
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    glPointSize( 4.0 );
+
+}
+
+void display(void)
+{
+
+
+    //run simulation
+     crunch();
+     // setup window
+     setupGL();
+    
     
     glVertexPointer( 2, GL_FLOAT, sizeof(Point), &points[0].x );
     glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(Point), &points[0].r );
 
-    glEnable( GL_POINT_SPRITE ); // GL_POINT_SPRITE_ARB if you're
-                                 // using the functionality as an extension.
-
-    glEnable( GL_POINT_SMOOTH );
-    glEnable( GL_BLEND );
-
-    glPointSize( 5.0 );
-
     glDrawArrays( GL_POINTS, 0, points.size() );
+
+
+
 
     glDisableClientState( GL_VERTEX_ARRAY );
     glDisableClientState( GL_COLOR_ARRAY );
 
 
-    glFlush();
+    //glFlush(); // dont need flush because swap buffer has it intrinsically..used before for single buffer
     glutSwapBuffers();
-
-
     glutReshapeFunc(reshape);
 }
 

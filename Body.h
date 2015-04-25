@@ -3,6 +3,13 @@
 
 #include <string> 
 
+#include "QuadNode.h"
+#define THETA 1
+
+
+
+class QuadNode;
+
 
 class Body{
 
@@ -26,6 +33,8 @@ class Body{
 		void resetForce();
 		void addForce(Body b);
 		void toString();
+		void calcForce(QuadNode* node);
+		void calcPosition(double time);
 
 
 

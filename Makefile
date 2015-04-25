@@ -1,4 +1,4 @@
-OBJS = main.o Body.o StartSimulation.o
+OBJS = main.o Body.o StartSimulation.o QuadNode.o
 CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c $(DEBUG) 
@@ -16,6 +16,9 @@ Body.o : Body.h Body.cpp
 
 StartSimulation.o : StartSimulation.h StartSimulation.cpp
 	$(CC) $(CFLAGS) StartSimulation.cpp $(GLFLAGS)
+
+QuadNode.o : QuadNode.h QuadNode.cpp
+	$(CC) $(CFLAGS) QuadNode.cpp
 
 
 clean:

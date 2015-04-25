@@ -1,5 +1,6 @@
 #include "StartSimulation.h"
 #include "Body.h"
+#include "QuadNode.h"
 #include <GL/glut.h>
 
 #include <string>
@@ -16,7 +17,7 @@ using namespace std;
 
 	
 
-StartSimulation::StartSimulation(int count){
+StartSimulation::StartSimulation(int count,int x, int y){
 
 
 
@@ -34,13 +35,16 @@ StartSimulation::StartSimulation(int count){
 	//temporary
 	Body *myList [count];
 
+	//QuadTree
+	this->mytree = new QuadNode(0,x,0,y);
+
 	//this->myBodies = myList[0];
 	myBodies = new Body[count];
 
 	for(i = 0; i < count; i++){
 
-		ina = rand()%800;//x
-		inb = rand()%800;//y
+		ina = rand()%x;//x
+		inb = rand()%y;//y
 		inc = rand()%1000;//mass
 
 		myList[i] = new Body(ina,inb,0.0,0.0,inc);
@@ -76,7 +80,7 @@ StartSimulation::StartSimulation(int count){
 }
 
 void StartSimulation::run(){
-
+	/*
 	int i,j;
 	
 	for(i = 0 ; i < this->numOfBodies ; i++){
@@ -109,7 +113,10 @@ void StartSimulation::run(){
 		this->myBodies[i].update(1);
 		
 	}
-	
+	*/
+	int count = this->numOfBodies;
+	Body **converted = &myBodies;
+	TreeRun(count, converted, this->mytree);
 
 
 
@@ -122,3 +129,26 @@ Body StartSimulation::GetBody(int i){
 
 }
 
+void StartSimulation::TreeRun(int count, Body **myList, QuadNode *tree)
+{
+	tree->clearNode();
+	for(int i = 0 ; i < count ; i++){
+		tree->addBody(myList[i]);
+		// printf("\nafter insert");
+		// myList[i]->toString();			
+	}
+
+
+
+	for(int i = 0 ; i < count ; i++){
+		myList[i]->resetForce();
+
+		myList[i]->calcForce(tree);
+		printf("\nafter calc");
+		//myList[i]->toString();
+		myList[i]->calcPosition(10);
+		myList[i]->toString();	
+	}
+
+
+}
