@@ -149,7 +149,7 @@ void Body::calcForce(QuadNode* node){
     double h = node->ymax - node->ymin; //height of the quadnode
     double r = h/d;
     
-    if(d2==0){
+    if(d2< 60){
         return;
     }
     if(!node->isactive){
@@ -168,8 +168,8 @@ void Body::calcForce(QuadNode* node){
          return;
         }else{
             //The condition that we can consider the quadnode as a whole when calculating force
-            this->fx += (dx/d)* (node->m * this->mass /d2);
-            this->fy += (dy/d)* (node->m * this->mass /d2);
+            this->fx += (dx/d)* (node->m * this->mass /(d2 * d2 *200));
+            this->fy += (dy/d)* (node->m * this->mass / ( d2 * d2 * 200));
             return;
         }
     }else{ //The condition that we only have one body in the quadnode

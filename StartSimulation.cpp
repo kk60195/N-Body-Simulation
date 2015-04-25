@@ -79,8 +79,9 @@ StartSimulation::StartSimulation(int count,int x, int y){
 
 }
 
-void StartSimulation::run(){
-	/*
+void StartSimulation::run(int choice){
+	
+	if(choice == 0){
 	int i,j;
 	
 	for(i = 0 ; i < this->numOfBodies ; i++){
@@ -105,19 +106,19 @@ void StartSimulation::run(){
 	}
 
 	
+	
+		for(i = 0; i < this-> numOfBodies ; i++){
+			this->myBodies[i].update(1);
+		
+		}
 
-	
-	//printf("\ncount ran for: %d\n", count);
-	
-	for(i = 0; i < this-> numOfBodies ; i++){
-		this->myBodies[i].update(1);
 		
 	}
-	*/
-	int count = this->numOfBodies;
-	this->convertedBodies = &myBodies;
-	TreeRun(count, this->myBodies, this->mytree);
-
+	if(choice == 1){
+		int count = this->numOfBodies;
+		this->convertedBodies = &myBodies;
+		TreeRun(count, this->myBodies, this->mytree);
+	}
 
 
 

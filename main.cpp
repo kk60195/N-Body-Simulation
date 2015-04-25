@@ -14,26 +14,31 @@
 
 
 #define GRIDSIDES 1000
-#define NUMBODY 200
-#define MAXMASS 200
-#define GalaxyX 1200
-#define GalaxyY 1000
-#define CORRMIN -800
-#define CORRMAX  800
+#define NUMBODY 200  //number of stars generated
+#define MAXMASS 200 // max mass a body cna get
+#define GalaxyX 1200 //0 to boundry
+#define GalaxyY 1000 // 0 to boundry
+#define CORRMIN -800 // display min
+#define CORRMAX  800 // display max
+
 
 using namespace std;
 
 
-
+//point structure used to render points in open GL
 struct Point
 {
     float x, y;
     unsigned char r, g, b, a;
 };
 
+
+
 std::vector< Point > points;
 
 StartSimulation Galaxy(NUMBODY,GalaxyX,GalaxyY);
+
+int algorithmChoice; //0:brute 1:QuadTree
 
 void reshape(int w, int h)
 {
@@ -43,7 +48,7 @@ void reshape(int w, int h)
 
 void crunch(){
 
-    Galaxy.run();
+    Galaxy.run(algorithmChoice);
 
  for( size_t i = 0; i < NUMBODY; ++i )
     {
@@ -131,19 +136,20 @@ void display(void)
 
 int main(int argc, char** argv)
 {	
-    /*
+    
 
-    int count;
+    
     if (argc > 1)
     {   
-    count = atoi( argv[1] );
+    algorithmChoice = atoi( argv[1] );
 
-    StartSimulation s1(count);
+    
     }
     else{
-    StartSimulation s1(5);
+    algorithmChoice = 0;
+
     }
-    */
+    
 	
 	glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);

@@ -28,7 +28,7 @@ public:
 	StartSimulation(int count,int x, int y);
 	Body GetBody(int place);
 	void TreeRun(int count, Body *myList, QuadNode *tree);
-	void run();
+	void run(int choice);
 
 
 
