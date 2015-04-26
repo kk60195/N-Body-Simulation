@@ -55,7 +55,7 @@ StartSimulation::StartSimulation(int count,int x, int y){
 
 		printf("%d) ",i + 1);
 		myList[i]->toString();
-		
+		delete *myList;	
 	}
 	
 	
@@ -118,6 +118,7 @@ void StartSimulation::run(int choice){
 		int count = this->numOfBodies;
 		this->convertedBodies = &myBodies;
 		TreeRun(count, this->myBodies, this->mytree);
+		//delete myList;
 	}
 
 
@@ -140,6 +141,7 @@ void StartSimulation::TreeRun(int count, Body *myList, QuadNode *tree)
 		// printf("\nafter insert");
 		// myList[i]->toString();			
 	}
+
 
 
 

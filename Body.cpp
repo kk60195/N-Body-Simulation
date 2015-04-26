@@ -42,65 +42,56 @@ using namespace std;
 		this->x += vx * time;
 		this->y += vy * time;
 
-		}
-		double Body::distanceTo(Body b){
+	}
 
-			double x_dist = this->x - b.x;
-    		double y_dist = this->y - b.y;
-    		double r_Squared = (x_dist*x_dist)  + (y_dist*y_dist); 
-    		double dist = sqrt(r_Squared);
-			return dist;
-		}
-		void Body::resetForce(){
-			this->fx= 0;
-			this->fy= 0;
-	
-		}
-		void Body::addForce(Body b){
-			//this->resetForce();
-			
-			/*F = G m1*m2 / r^2  
-     			G = gravitational constant | G = 6.67300 × 10^−11
-     			m1 = mass 1 (kg)
-     			m2 = mass 2 (kg)
-     			r = distance between the centers of the masses*/
+	double Body::distanceTo(Body b){
+
+		double x_dist = this->x - b.x;
+		double y_dist = this->y - b.y;
+		double r_Squared = (x_dist*x_dist)  + (y_dist*y_dist); 
+		double dist = sqrt(r_Squared);
+		return dist;
+	}
+
     
-    			//find the distance between the x y pairs 
+	void Body::resetForce(){
+		this->fx= 0;
+		this->fy= 0;
 
-    			//make sure its not itself
-    			
-    			//if(this->x != b.x && this->y != b.y){
-
-     			// count number of forces added
-     			int count;
-
-     			if(this->fx == 0)
-     				if(this->fy == 0)
-     					count = 0;
-     			count++;
-     			if(count > this->AddCount) this->AddCount = count;
-
-     			    double x_dist = this->x - b.x;
-    				double y_dist = this->y - b.y;
-    		
-    				double dist = this->distanceTo(b);
-
-    				    //threashhold zone
-    					if(dist > 10){
-
-    						Force = (  this->mass * b.mass )/ (dist* dist * this->AddCount);
-    						this->fx -= Force * x_dist ;/// dist;
-    						this->fy -= Force * y_dist ;/// dist;
-
-    					}		
+	}
 
 
-		}
-		void Body::toString(){
-		
-			printf("Mass:%.1f\tPosition:%.1f,%.1f\tVelocity:%.1f,%.1f Force::%.1f,%.1f\n",this->mass, this->x,this->y,this->vx,this->vy,this->fx,this->fy);
-			
-		}
+	void Body::addForce(Body b){
+
+			int count;
+
+			if(this->fx == 0)
+				if(this->fy == 0)
+					count = 0;
+			count++;
+			if(count > this->AddCount) this->AddCount = count;
+
+			    double x_dist = this->x - b.x;
+			double y_dist = this->y - b.y;
+	
+			double dist = this->distanceTo(b);
+
+			    //threashhold zone
+				if(dist > 10){
+
+					Force = (  this->mass * b.mass )/ (dist* dist * this->AddCount);
+					this->fx -= Force * x_dist ;/// dist;
+					this->fy -= Force * y_dist ;/// dist;
+
+				}		
+
+
+	}
+
+
+	void Body::toString(){	
+		printf("Mass:%.1f\tPosition:%.1f,%.1f\tVelocity:%.1f,%.1f Force::%.1f,%.1f\n",this->mass, this->x,this->y,this->vx,this->vy,this->fx,this->fy);		
+	}
 
 void Body::calcForce(QuadNode* node){
     double dx = node->mx - this->x;
