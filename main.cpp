@@ -10,6 +10,8 @@
 #include <cstdio>
 #include <GL/glut.h>
 #include <signal.h>
+#include <sstream>
+
 
 #include "Body.h"
 #include "StartSimulation.h"
@@ -26,8 +28,22 @@
 #define CORRMIN -800 // display min
 #define CORRMAX  800 // display max
 
+// constants
+const int   SCREEN_WIDTH    = 400;
+const int   SCREEN_HEIGHT   = 300;
+const float CAMERA_DISTANCE = 10.0f;
+const int   TEXT_WIDTH      = 80;
+const int   TEXT_HEIGHT     = 130;
+
+
+#include <iomanip>
+using std::stringstream;
+using std::cout;
+using std::endl;
+using std::ends;
 
 using namespace std;
+
 
 
 //point structure used to render points in open GL
@@ -44,19 +60,82 @@ StartSimulation *GalaxyPtr;
 int algorithmChoice; //0:brute 1:QuadTree
 int ManualNumBody;
 
+
 static bool exitFlag= false;
 
 
 
 
 
+void *font = GLUT_BITMAP_TIMES_ROMAN_24;
+
+
 //global timing
 double resultTotal;
 double rounds;
 
+
 static void sighandler(int sig) {
   exitFlag = true;
 }
+
+
+
+void drawString(const char *str, int x, int y, float color[4], void *font)
+{
+    glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT); // lighting and color mask
+    glDisable(GL_LIGHTING);     // need to disable lighting for proper text color
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4fv(color);          // set text color
+    glRasterPos2i(x, y);        // place text position
+
+    // loop all characters in the string
+    while(*str)
+    {
+        glutBitmapCharacter(font, *str);
+        ++str;
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+    glPopAttrib();
+}
+
+void showInfo(double timing)
+{
+    // backup current model-view matrix
+    glPushMatrix();                     // save current modelview matrix
+    glLoadIdentity();                   // reset modelview matrix
+
+    // set to 2D orthogonal projection
+    glMatrixMode(GL_PROJECTION);        // switch to projection matrix
+    glPushMatrix();                     // save current projection matrix
+    glLoadIdentity();                   // reset projection matrix
+    gluOrtho2D(0, GalaxyX, 0, GalaxyY); // set to orthogonal projection
+
+    float color[4] = {1, 1, 1, 1};
+
+    stringstream ss;
+    ss << std::fixed << std::setprecision(3);
+
+    ss << "Timeing " << timing <<  " msec" <<ends;
+    drawString(ss.str().c_str(), 1, 950, color, font);
+    ss.str("");
+
+
+    // unset floating format
+    ss << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
+
+    // restore projection matrix
+    glPopMatrix();                   // restore to previous projection matrix
+
+    // restore modelview matrix
+    glMatrixMode(GL_MODELVIEW);      // switch to modelview matrix
+    glPopMatrix();                   // restore to previous modelview matrix
+}
+
+
 
 void reshape(int w, int h)
 {
@@ -79,6 +158,8 @@ void crunch(){
      resultTotal += result.tv_sec * 1E3 +  result.tv_nsec * 1E-6;
      //resultTotal = resultTotal / rounds;
      printf("CPU time:\t%.1f (msec)\n", resultTotal/rounds);
+      //text
+     
 
 
 
@@ -155,7 +236,10 @@ void display(void)
     glDisableClientState( GL_VERTEX_ARRAY );
     glDisableClientState( GL_COLOR_ARRAY );
 
-
+     
+     
+    showInfo(resultTotal/rounds);
+   
     //glFlush(); // dont need flush because swap buffer has it intrinsically..used before for single buffer
     glutSwapBuffers();
     glutReshapeFunc(reshape);
