@@ -53,9 +53,15 @@ StartSimulation::StartSimulation(int count,int x, int y){
 		//error here
 		this->myBodies[i] = *myList[i];
 
+<<<<<<< HEAD
 		printf("%d) ",i + 1);
 		myList[i]->toString();
 		delete *myList;	
+=======
+		//printf("%d) ",i + 1);
+		//myList[i]->toString();
+		
+>>>>>>> cea23cca8f68aecf88d0ce841921f91fe7c119a8
 	}
 	
 	
@@ -97,10 +103,10 @@ void StartSimulation::run(int choice){
 			}
 
 		}
-		printf("\n1)");
-		myBodies[0].toString();
-		printf("\n2)");
-		myBodies[1].toString();
+		//printf("\n1)");
+		//myBodies[0].toString();
+		//printf("\n2)");
+		//myBodies[1].toString();
 
 		
 	}
@@ -112,7 +118,7 @@ void StartSimulation::run(int choice){
 		
 		}
 
-		
+
 	}
 	if(choice == 1){
 		int count = this->numOfBodies;
@@ -149,10 +155,10 @@ void StartSimulation::TreeRun(int count, Body *myList, QuadNode *tree)
 		myList[i].resetForce();
 
 		myList[i].calcForce(tree);
-		printf("\nafter calc");
+		//printf("\nafter calc");
 		//myList[i]->toString();
 		myList[i].calcPosition(10);
-		myList[i].toString();	
+		//myList[i].toString();	
 	}
 
 	
