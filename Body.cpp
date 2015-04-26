@@ -110,7 +110,7 @@ void Body::calcForce(QuadNode* node){
     double h = node->ymax - node->ymin; //height of the quadnode
     double r = h/d;
     
-    if(d < 30){
+    if(d < 40){
         
     }
     else if(!node->isactive){
@@ -130,8 +130,8 @@ void Body::calcForce(QuadNode* node){
     else{ //The condition that we only have one body in the quadnode
         //printf("fx: %lf\n",this->fx);
 
-            this->fx += (dx/d)* (node->m * this->mass /(d2 * 200));
-            this->fy += (dy/d)* (node->m * this->mass / (d2 * 200));
+            this->fx += (dx /d)* (node->m * this->mass /(d2 * 200));
+            this->fy += (dy /d)* (node->m * this->mass / (d2 * 200));
            
     }
     
@@ -145,3 +145,4 @@ void Body::calcPosition(double time){
         this->x += vx * time;
         this->y += vy * time;
 }
+

@@ -7,6 +7,8 @@
 #include <vector>
 #include <cstdlib>
 #include <math.h>
+#include <cstdio>
+
 
 #include "Body.h"
 #include "StartSimulation.h"
@@ -40,6 +42,11 @@ StartSimulation *GalaxyPtr;
 
 int algorithmChoice; //0:brute 1:QuadTree
 int ManualNumBody;
+
+
+//global timing
+double resultTotal;
+double rounds;
 
 void reshape(int w, int h)
 {
@@ -107,11 +114,24 @@ void setupGL(){
 
 void display(void)
 {
+     struct timespec diff(struct timespec start, struct timespec end);
+     struct timespec time1, time2,result;
 
 
+     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time1);
     //run simulation
      crunch();
      // setup window
+     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time2);
+
+     result = diff(time1,time2);
+     rounds++;
+
+     resultTotal += result.tv_sec * 1E3 +  result.tv_nsec * 1E-6;
+     //resultTotal = resultTotal / rounds;
+
+     printf("CPU time:\t%.1f (msec)\n", resultTotal/rounds);
+
      setupGL();
     
     
@@ -165,6 +185,9 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
 
+    //
+    rounds = 0;
+
     
      // populate points
     for( size_t i = 0; i < NUMBODY; ++i )
@@ -188,3 +211,25 @@ int main(int argc, char** argv)
 
 	return 0;
 }
+/************************************/
+
+struct timespec diff(struct timespec start, struct timespec end)
+{
+  struct timespec temp;
+  if ((end.tv_nsec-start.tv_nsec)<0) {
+    temp.tv_sec = end.tv_sec-start.tv_sec-1;
+    temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
+  } else {
+    temp.tv_sec = end.tv_sec-start.tv_sec;
+    temp.tv_nsec = end.tv_nsec-start.tv_nsec;
+  }
+  return temp;
+}
+
+double fRand(double fMin, double fMax)
+{
+    double f = (double)random() / RAND_MAX;
+    return fMin + f * (fMax - fMin);
+}
+
+/************************************/
