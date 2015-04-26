@@ -16,7 +16,9 @@
 
 
 #define GRIDSIDES 1000
-#define NUMBODY 200 //number of stars generated
+
+#define NUMBODY 2000  //number of stars generated
+
 #define MAXMASS 200 // max mass a body cna get
 #define GalaxyX 1200 //0 to boundry
 #define GalaxyY 1000 // 0 to boundry
