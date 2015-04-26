@@ -8,11 +8,11 @@
 #include <cstdlib>
 #include <math.h>
 #include <cstdio>
-
+#include <GL/glut.h>
 
 #include "Body.h"
 #include "StartSimulation.h"
-#include <GL/glut.h>
+
 
 
 #define GRIDSIDES 1000
@@ -34,15 +34,12 @@ struct Point
     unsigned char r, g, b, a;
 };
 
-
-
 std::vector< Point > points;
 
 StartSimulation *GalaxyPtr;
 
 int algorithmChoice; //0:brute 1:QuadTree
 int ManualNumBody;
-
 
 //global timing
 double resultTotal;
@@ -56,7 +53,22 @@ void reshape(int w, int h)
 
 void crunch(){
 
+         struct timespec diff(struct timespec start, struct timespec end);
+     struct timespec time1, time2,result;
+     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time1);
+    //run simulation
+
     GalaxyPtr->run(algorithmChoice);
+
+     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time2);
+     result = diff(time1,time2);
+     rounds++;
+     resultTotal += result.tv_sec * 1E3 +  result.tv_nsec * 1E-6;
+     //resultTotal = resultTotal / rounds;
+     printf("CPU time:\t%.1f (msec)\n", resultTotal/rounds);
+
+
+
 
  for( size_t i = 0; i < NUMBODY; ++i )
     {
@@ -67,12 +79,9 @@ void crunch(){
     {
         
         Point pt;
-       //pt.x = -50 + (rand() % 100);
-       //pt.y = -50 + (rand() % 100);
+     
        pt.x =  CORRMIN + GalaxyPtr->GetBody(i).x;
        pt.y =  CORRMIN + GalaxyPtr->GetBody(i).y;
-
-        //printf("\nx:%.2f y:%.2f",pt.x,pt.y);
 
         pt.r = GalaxyPtr->GetBody(i).r;
         pt.g = GalaxyPtr->GetBody(i).g;
@@ -114,27 +123,14 @@ void setupGL(){
 
 void display(void)
 {
-     struct timespec diff(struct timespec start, struct timespec end);
-     struct timespec time1, time2,result;
 
-
-     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time1);
     //run simulation
      crunch();
-     // setup window
-     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time2);
 
-     result = diff(time1,time2);
-     rounds++;
-
-     resultTotal += result.tv_sec * 1E3 +  result.tv_nsec * 1E-6;
-     //resultTotal = resultTotal / rounds;
-
-     printf("CPU time:\t%.1f (msec)\n", resultTotal/rounds);
-
+     //refactor
      setupGL();
     
-    
+    //draw
     glVertexPointer( 2, GL_FLOAT, sizeof(Point), &points[0].x );
     glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(Point), &points[0].r );
 
