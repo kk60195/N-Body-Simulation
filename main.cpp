@@ -9,6 +9,7 @@
 #include <math.h>
 #include <cstdio>
 #include <GL/glut.h>
+#include <signal.h>
 
 #include "Body.h"
 #include "StartSimulation.h"
@@ -43,9 +44,19 @@ StartSimulation *GalaxyPtr;
 int algorithmChoice; //0:brute 1:QuadTree
 int ManualNumBody;
 
+static bool exitFlag= false;
+
+
+
+
+
 //global timing
 double resultTotal;
 double rounds;
+
+static void sighandler(int sig) {
+  exitFlag = true;
+}
 
 void reshape(int w, int h)
 {
@@ -125,6 +136,9 @@ void setupGL(){
 
 void display(void)
 {
+	if(exitFlag){
+		throw 1;
+	}
 
     //run simulation
      crunch();
@@ -200,11 +214,15 @@ int main(int argc, char** argv)
         points.push_back(pt);
     }    
 	
-    
 
     glutIdleFunc(display);
 
-	glutMainLoop();
+	try{
+		glutMainLoop();
+	}catch(int& value){
+		printf("interrpted");
+		return 0;
+	}
 
 
 	return 0;
