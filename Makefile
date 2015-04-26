@@ -3,7 +3,7 @@ CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c $(DEBUG) 
 LFLAGS = -Wall $(DEBUG)
-GLFLAGS =  -lGL -lglut 
+GLFLAGS =  -lGL -lglut -lGLU
 
 
 all: main
