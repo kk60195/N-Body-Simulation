@@ -5,7 +5,6 @@
 #include "QuadNode.h"
 
 #include <vector>
-
 #include <stdlib.h>
 
 

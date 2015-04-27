@@ -9,6 +9,9 @@
 using std::cerr;
 using std::cout;
 #include <cmath>
+#include <stdio.h>
+
+double count;
 
 QuadNode::QuadNode(double x1, double x2, 
 		double y1, double y2)
@@ -38,6 +41,21 @@ QuadNode::QuadNode(double x1, double x2,
 	this->me=NULL;
 	this->myChildren=NULL;
 }
+QuadNode::QuadNode()
+{
+	this->xmin=0;
+	this->xmax=0;
+	this->ymin=0;
+	this->ymax=0;
+	this->mx=0;
+	this->my=0;
+	this->m=0;
+	this->theta=1.0;
+	this->isactive=false; //should be false, because we'll have empty quadnode initially
+	this->isparent=false;
+	this->me=NULL;
+	this->myChildren=NULL;
+}
 
 
 
@@ -45,6 +63,7 @@ QuadNode::QuadNode(double x1, double x2,
 QuadNode::~QuadNode()
 {
 	this->clearNode();
+	count = 0;
 }
 
 void QuadNode::addBody(Body* body)
@@ -106,7 +125,7 @@ void QuadNode::clearNode (){
 		return;
 
 	//delete all the children
-	for(unsigned int i=0;i<4;i++){
+	for(int i=0;i<4;i++){
 		if(this->myChildren[i] != NULL){
 			delete this->myChildren[i];
 			this->myChildren[i] = NULL;
@@ -130,7 +149,7 @@ void QuadNode::calcMass(){
 	this->m=0;
 
 	//calculate from the children's mass & centre of mass
-	for(unsigned int i=0;i<4;i++){
+	for(int i=0;i<4;i++){
 		if(this->myChildren[i]->isactive){
 			//If there is a body in myChildren[i],add up the mass and mass*position
 			this->m += this->myChildren[i]->m;
@@ -144,43 +163,8 @@ void QuadNode::calcMass(){
 }
 
 
-// void QuadNode::calcForce(Body* body){
-//     double dx = this->mx - body->x;
-//     double dy = this->my - body->y;
-//     double d2 = dx * dx + dy * dy;
-//     double d = sqrt(d2); //distance from quadnode's center to target body
-//     double h = this->ymax - this->ymin; //height of the quadnode
-//     double r = h/d;
-//     if(this->isparent){
-//        if(r >= theta)
-//         {//We need to separate to four smaller nodes for this quadnode and calculate recursively
-//             for(int i = 0; i < 4; i++){
-//                 if(this->myChildren[i]!=NULL){
-//                    this->myChildren[i] -> calcForce(body);
-//                 }
-//             }
-//          return;
-//         }else{
-//             //The condition that we can consider the quadnode as a whole when calculating force
-//             body->fx = (dx/d)* (this->m * body->mass /d2);
-//             body->fy = (dy/d)* (this->m * body->mass /d2);
-//             return;
-//         }
-//     }else{ //The condition that we only have one body in the quadnode
-//         body->fx = (dx/d)* (this->m * body->mass /d2);
-//         body->fy = (dy/d)* (this->m * body->mass /d2);  
-//         return;      
-//     }
-    
-// }
 
-/*
-QuadNode::calAllForce(BodySystem* bs){
-
-}
-*/
-
-unsigned int QuadNode::getQuadrant(Body* body){
+int QuadNode::getQuadrant(Body* body){
     //0,1,2,3 means the four quadrant, 5 means that this body does not fit in this quadnode
 	
 	if((body->x >= this->xmin) && (body->x <= (this->xmin + this->xmax)/2)){
@@ -205,12 +189,14 @@ void QuadNode::createChildren(){
 
 	//if it is already a parent, clear the children
 	if(this->isparent){
-		for(unsigned int i=0;i<4;i++){
-			delete this->myChildren[i];
-			this->myChildren[i]=NULL;
+		for(int i=0;i<4;i++){
+			delete (this->myChildren[i]);
+			//this->myChildren[i]=NULL;
 		}
-	}
 
+	}
+   count++;
+   //printf("\ncount%.1f",count);
 	//divide the node into four parts, each part as a child
 	this->myChildren=new QuadNode*[4];
 	double xmid = (this->xmin + this->xmax)/2;
@@ -247,7 +233,7 @@ void QuadNode::setTheta(double inTheta){
 	this->theta=inTheta;
 	if(!this->isparent)
 		return;
-	for(unsigned int i=0;i<4;i++)
+	for( int i=0;i<4;i++)
 		this->myChildren[i]->setTheta(this->theta);
 }
 double QuadNode::getTheta(){

@@ -8,8 +8,10 @@
 #include <cstdlib>
 #include <math.h>
 #include <cstdio>
+
 #include <GL/glut.h>
 #include <sstream>
+#include <iomanip>
 
 #include "Body.h"
 #include "StartSimulation.h"
@@ -17,9 +19,6 @@
 
 
 #define GRIDSIDES 1000
-
-#define NUMBODY 2000  //number of stars generated
-
 #define MAXMASS 200 // max mass a body cna get
 #define GalaxyX 1200 //0 to boundry
 #define GalaxyY 1000 // 0 to boundry
@@ -34,12 +33,10 @@ const int   TEXT_WIDTH      = 80;
 const int   TEXT_HEIGHT     = 130;
 
 
-#include <iomanip>
 using std::stringstream;
 using std::cout;
 using std::endl;
 using std::ends;
-
 using namespace std;
 
 
@@ -51,13 +48,12 @@ struct Point
     unsigned char r, g, b, a;
 };
 
+
+//global
 std::vector< Point > points;
-
 StartSimulation *GalaxyPtr;
-
 int algorithmChoice; //0:brute 1:QuadTree
 int ManualNumBody;
-
 void *font = GLUT_BITMAP_TIMES_ROMAN_24;
 
 //global timing
@@ -103,7 +99,7 @@ void showInfo(double timing)
     stringstream ss;
     ss << std::fixed << std::setprecision(3);
 
-    ss << "Timeing " << timing <<  " msec" <<ends;
+    ss << "Timing " << timing <<  "Msec" << " \n #Obj: " << ManualNumBody << "\n Iter: " << rounds <<ends;
     drawString(ss.str().c_str(), 1, 950, color, font);
     ss.str("");
 
@@ -128,7 +124,7 @@ void reshape(int w, int h)
 
 void crunch(){
 
-         struct timespec diff(struct timespec start, struct timespec end);
+     struct timespec diff(struct timespec start, struct timespec end);
      struct timespec time1, time2,result;
      clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time1);
     //run simulation
@@ -147,12 +143,12 @@ void crunch(){
 
 
 
- for( size_t i = 0; i < NUMBODY; ++i )
+ for( size_t i = 0; i < ManualNumBody; ++i )
     {
         points.pop_back();
     }
 
-    for( size_t i = 0; i < NUMBODY; ++i )
+    for( size_t i = 0; i < ManualNumBody; ++i )
     {
         
         Point pt;
@@ -198,8 +194,32 @@ void setupGL(){
 
 }
 
+void remakeGalaxy(int BodyCount){
+
+    //if(GalaxyPtr){
+    //    delete GalaxyPtr;
+    //}
+    int i;
+
+        for( i = 0; i < ManualNumBody ; i++){
+             free(GalaxyPtr);
+
+        }
+
+    ManualNumBody += 100;
+    rounds = 0;
+    
+
+    GalaxyPtr = new StartSimulation(ManualNumBody,GalaxyX,GalaxyY);
+
+}
+
 void display(void)
 {
+
+    if(rounds == 400){
+        //remakeGalaxy(100);
+    }
 
     //run simulation
      crunch();
@@ -217,14 +237,13 @@ void display(void)
     glDisableClientState( GL_COLOR_ARRAY );
 
      
-     
+    //display text
     showInfo(resultTotal/rounds);
    
     //glFlush(); // dont need flush because swap buffer has it intrinsically..used before for single buffer
     glutSwapBuffers();
     glutReshapeFunc(reshape);
 }
-
 
 
 
@@ -266,7 +285,7 @@ int main(int argc, char** argv)
 
     
      // populate points
-    for( size_t i = 0; i < NUMBODY; ++i )
+    for( size_t i = 0; i < ManualNumBody; ++i )
     {
         Point pt;
         pt.x = GalaxyPtr->GetBody(i).x;
@@ -301,11 +320,4 @@ struct timespec diff(struct timespec start, struct timespec end)
   }
   return temp;
 }
-
-double fRand(double fMin, double fMax)
-{
-    double f = (double)random() / RAND_MAX;
-    return fMin + f * (fMax - fMin);
-}
-
 /************************************/

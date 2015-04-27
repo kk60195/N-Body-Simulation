@@ -24,7 +24,7 @@ public:
 	//Create a quadtree with a certain space
 	QuadNode(double x1, double x2, 
 		double y1, double y2);
-
+	QuadNode();
     //Create a quadtree using existing file
 //	QuadNode( BodySystem* bs );
 
@@ -50,7 +50,7 @@ public:
 //	void calcAllForce(BodySystem* bs);
 
 	//Get which quadrant the body is in 
-	unsigned int getQuadrant(Body* body);
+	int getQuadrant(Body* body);
 
 	//Get the left side of the quadnode
 	double getXmin();
