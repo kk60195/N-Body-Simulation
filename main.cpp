@@ -248,7 +248,7 @@ void display(void)
 
 
 int main(int argc, char** argv)
-{	
+{   
     
 
     
@@ -270,8 +270,8 @@ int main(int argc, char** argv)
 
     GalaxyPtr = new StartSimulation(ManualNumBody,GalaxyX,GalaxyY);
     
-	
-	glutInit(&argc, argv);
+    
+    glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 
     glutInitWindowSize(GalaxyX,GalaxyY);
@@ -296,15 +296,15 @@ int main(int argc, char** argv)
         pt.a = 255;
         points.push_back(pt);
     }    
-	
+    
     
 
     glutIdleFunc(display);
 
-	glutMainLoop();
+    glutMainLoop();
 
 
-	return 0;
+    return 0;
 }
 /************************************/
 
