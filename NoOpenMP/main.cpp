@@ -20,8 +20,8 @@
 
 #define GRIDSIDES 1000
 #define MAXMASS 200 // max mass a body cna get
-#define GalaxyX 1200 //0 to boundry
-#define GalaxyY 1000 // 0 to boundry
+#define GalaxyX 10000 //0 to boundry
+#define GalaxyY 10000 // 0 to boundry
 #define CORRMIN -800 // display min
 #define CORRMAX  800 // display max
 
@@ -38,6 +38,8 @@ using std::cout;
 using std::endl;
 using std::ends;
 using namespace std;
+
+
 
 
 
@@ -283,6 +285,9 @@ int main(int argc, char** argv)
     //
     //rounds = 0;
 
+
+
+    
     
      // populate points
     for( size_t i = 0; i < ManualNumBody; ++i )

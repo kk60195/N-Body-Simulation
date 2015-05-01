@@ -15,6 +15,8 @@ using namespace std;
 
 #define TIMETORUN 50
 
+
+//// nvcc hello-world.cu -L /usr/local/cuda/lib -lcudart -o hello-world
 //CUDA
 const int N = 16; 
 const int blocksize = 16; 
@@ -187,10 +189,10 @@ void StartSimulation::TreeRunOpenMP(int count, Body *myList, QuadNode *tree)
 		// myList[i]->toString();			
 	}
 
-omp_set_num_threads(4);
+//omp_set_num_threads(4);
 
-#pragma omp parallel shared(myList) private(i)
-#pragma omp for
+//#pragma omp parallel shared(myList) private(i)
+//#pragma omp for
 
 	for(int i = 0 ; i < count ; i++){
 		myList[i].resetForce();
