@@ -143,6 +143,30 @@ void StartSimulation::run(int choice){
 		TreeRunOpenMP(count, this->myBodies, this->mytree);
 	}
 
+	//brute force Open MP
+	else if(choice == 3){
+
+		int i,j;
+	
+		for(i = 0 ; i < this->numOfBodies ; i++){
+
+			this->myBodies[i].resetForce();
+			
+	omp_set_num_threads(2);
+
+	#pragma omp parallel for
+			for(j = 0 ; j< this->numOfBodies ; j++){
+
+				if(i!=j){
+					this->myBodies[i].addForce(this->myBodies[j]);
+				}
+			}
+			this->myBodies[i].update(1);
+		}
+	
+
+	}
+
 
 
 }

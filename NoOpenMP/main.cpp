@@ -20,10 +20,10 @@
 
 #define GRIDSIDES 1000
 #define MAXMASS 200 // max mass a body cna get
-#define GalaxyX 10000 //0 to boundry
-#define GalaxyY 10000 // 0 to boundry
-#define CORRMIN -800 // display min
-#define CORRMAX  800 // display max
+#define GalaxyX 1000 //0 to boundry
+#define GalaxyY 1000 // 0 to boundry
+#define CORRMIN -1000 // display min
+#define CORRMAX  1000 // display max
 
 // constants
 const int   SCREEN_WIDTH    = 400;
@@ -227,24 +227,24 @@ void display(void)
      crunch();
 
      //refactor
-     //setupGL();
+     setupGL();
     
     //draw
-    //glVertexPointer( 2, GL_FLOAT, sizeof(Point), &points[0].x );
-    //glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(Point), &points[0].r );
+    glVertexPointer( 2, GL_FLOAT, sizeof(Point), &points[0].x );
+    glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(Point), &points[0].r );
 
-    //glDrawArrays( GL_POINTS, 0, points.size() );
+    glDrawArrays( GL_POINTS, 0, points.size() );
 
-    //glDisableClientState( GL_VERTEX_ARRAY );
-    //glDisableClientState( GL_COLOR_ARRAY );
+    glDisableClientState( GL_VERTEX_ARRAY );
+    glDisableClientState( GL_COLOR_ARRAY );
 
      
     //display text
-    //showInfo(resultTotal/rounds);
+    showInfo(resultTotal/rounds);
    
-    //glFlush(); // dont need flush because swap buffer has it intrinsically..used before for single buffer
-    //glutSwapBuffers();
-    //glutReshapeFunc(reshape);
+    glFlush(); // dont need flush because swap buffer has it intrinsically..used before for single buffer
+    glutSwapBuffers();
+    glutReshapeFunc(reshape);
 }
 
 
@@ -273,14 +273,14 @@ int main(int argc, char** argv)
     GalaxyPtr = new StartSimulation(ManualNumBody,GalaxyX,GalaxyY);
     
     
-    //glutInit(&argc, argv);
-    //glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 
-    //glutInitWindowSize(GalaxyX,GalaxyY);
-    //glutCreateWindow("Random Points");
+    glutInitWindowSize(GalaxyX,GalaxyY);
+    glutCreateWindow("Random Points");
 
-    //glutDisplayFunc(display);
-    //glutReshapeFunc(reshape);
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
 
     //
     //rounds = 0;
@@ -306,7 +306,7 @@ int main(int argc, char** argv)
 
     int i = 0;
 
-    for(i = 0; i < 100; i++){
+    for(i = 0; i < 10; i++){
         display();
 
     }

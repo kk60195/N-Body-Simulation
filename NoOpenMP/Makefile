@@ -4,15 +4,16 @@ NCC = nvcc
 DEBUG = -g
 #CFLAGS = -Wall -c $(DEBUG) 
 #LFLAGS = -Wall $(DEBUG) -fopenmp
-CFLAGS =  -c $(DEBUG) 
+CFLAGS =  -c $(DEBUG)
 LFLAGS =  $(DEBUG) 
 GLFLAGS =  -lGL -lglut -lGLU -lrt
-NVFLAG = -L /usr/local/cuda/lib -lcudart 
+NVFLAG = -L /usr/local/cuda/lib -lcudart
+OMPFLAG = -Xcompiler -fopenmp
 
 all: main
 
 main: $(OBJS)
-	$(NCC) $(LFLAGS) $(OBJS) -o main $(GLFLAGS) 
+	$(NCC)  $(OMPFLAG) $(LFLAGS) $(OBJS) -o main $(GLFLAGS) 
 
 Body.o : Body.h Body.cpp
 	$(NCC) $(CFLAGS) Body.cpp
