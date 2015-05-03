@@ -4,6 +4,8 @@
 #include <GL/glut.h>
 #include <omp.h>
 
+#include "cuPrintf.cu"
+
 #include <string>
 #include <time.h> 
 #include <stdio.h>      /* printf, scanf, puts, NULL */
@@ -25,6 +27,55 @@ __global__
 void hello(char *a, int *b) 
 {
 	a[threadIdx.x] += b[threadIdx.x];
+	int myid = blockIdx.x;
+	cuPrintf("hello%d\n", myid);
+}
+
+__global__ 
+void ComputeForce(Body* Bodies) 
+{
+	//a[threadIdx.x] += b[threadIdx.x];
+	int myid = blockIdx.x;
+	int j;
+	double x_dist,y_dist;
+	double r_Squared;
+	double dist;
+	double Force;
+	cuPrintf("hello%d\n", myid);
+
+
+	Bodies[myid].fx = 0;
+	Bodies[myid].fy = 0;
+
+	for(j = 0 ; j< gridDim.x; j++){
+
+				if(myid!=j){
+					
+					    x_dist = Bodies[myid].x - Bodies[j].x;
+						y_dist = Bodies[myid].y - Bodies[j].y;
+						r_Squared = (x_dist*x_dist)  + (y_dist*y_dist);
+						dist = sqrt(r_Squared);
+
+						if(dist > 10){
+
+							Force = (Bodies[myid].mass * Bodies[j].mass )/ (dist *dist * gridDim.x * gridDim.x * gridDim.x);
+							Bodies[myid].fx -= Force * x_dist ;/// dist;
+							Bodies[myid].fy -= Force * y_dist ;/// dist;
+
+						}
+				}
+	}
+
+
+ __syncthreads();
+
+	for(j = 0 ; j< gridDim.x; j++){
+		Bodies[myid].vx += Bodies[myid].fx / Bodies[myid].mass;
+        Bodies[myid].vy += Bodies[myid].fy / Bodies[myid].mass;
+
+        Bodies[myid].x += Bodies[myid].vx;
+        Bodies[myid].y += Bodies[myid].vy;
+	}	
 }
 
 
@@ -113,7 +164,7 @@ void StartSimulation::run(int choice){
 	
 	if(choice == 0){
 	int i,j;
-	
+		
 		for(i = 0 ; i < this->numOfBodies ; i++){
 
 			this->myBodies[i].resetForce();
@@ -143,26 +194,45 @@ void StartSimulation::run(int choice){
 		TreeRunOpenMP(count, this->myBodies, this->mytree);
 	}
 
-	//brute force Open MP
+	//brute force CUDA
 	else if(choice == 3){
 
-		int i,j;
+		//char a[N] = "Hello \0\0\0\0\0\0";
+		//int b[N] = {15, 10, 6, 0, -11, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+		Body *CBody;
+		const int CSize = this->numOfBodies * sizeof(Body);
+
+		cudaMalloc( (void**)&CBody, CSize);
+
+		cudaMemcpy(CBody, this->myBodies,CSize, cudaMemcpyHostToDevice);
+
+		dim3 dimBlock(1,1);
+		dim3 dimGrid(this->numOfBodies,1);
+
+		ComputeForce<<<dimGrid,dimBlock>>>(CBody);
+
+		cudaMemcpy(this->myBodies,CBody,CSize, cudaMemcpyDeviceToHost);
+
+
+		cudaFree(CBody);
+		/*
+		printf("%s", a);
+
+		cudaMalloc( (void**)&ad, csize ); 
+		cudaMalloc( (void**)&bd, isize ); 
+		cudaMemcpy( ad, a, csize, cudaMemcpyHostToDevice ); 
+		cudaMemcpy( bd, b, isize, cudaMemcpyHostToDevice ); 
 	
-		for(i = 0 ; i < this->numOfBodies ; i++){
-
-			this->myBodies[i].resetForce();
-			
-	omp_set_num_threads(2);
-
-	#pragma omp parallel for
-			for(j = 0 ; j< this->numOfBodies ; j++){
-
-				if(i!=j){
-					this->myBodies[i].addForce(this->myBodies[j]);
-				}
-			}
-			this->myBodies[i].update(1);
-		}
+		dim3 dimBlock( blocksize, 1 );
+		dim3 dimGrid( 1, 1 );
+		hello<<<dimGrid, dimBlock>>>(ad, bd);
+		cudaMemcpy( a, ad, csize, cudaMemcpyDeviceToHost ); 
+		cudaFree( ad );
+		cudaFree( bd );
+	
+		printf("%s\n", a);
+		*/
 	
 
 	}

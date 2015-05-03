@@ -1,14 +1,25 @@
 OBJS = main.o Body.o StartSimulation.o QuadNode.o
 CC = g++
+
+#cuda g++ version
 NCC = nvcc
+
 DEBUG = -g
+
+#nvcc doesnt have -wall
 #CFLAGS = -Wall -c $(DEBUG) 
 #LFLAGS = -Wall $(DEBUG) -fopenmp
 CFLAGS =  -c $(DEBUG)
 LFLAGS =  $(DEBUG) 
+
+#openGL Flags
 GLFLAGS =  -lGL -lglut -lGLU -lrt
+
+#Cuda flags
 NVFLAG = -L /usr/local/cuda/lib -lcudart
-OMPFLAG = -Xcompiler -fopenmp
+
+#OpenMP needs special flag to pass into xCompiler
+OMPFLAG = -Xcompiler -fopenmp 
 
 all: main
 

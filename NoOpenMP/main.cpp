@@ -310,9 +310,9 @@ int main(int argc, char** argv)
         display();
 
     }
-    //glutIdleFunc(display);
+    glutIdleFunc(display);
 
-    //glutMainLoop();
+    glutMainLoop();
 
 
     return 0;
