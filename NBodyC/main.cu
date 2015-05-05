@@ -8,6 +8,9 @@
 #include <pthread.h> // pthreads
 #include <omp.h> // openmp
 
+#include "cuPrintf.cu" // cuda print
+#include "cuPrintf.cuh" //cuda print
+
 
 #include <GL/glut.h> //openGL
 //#include <sstream>
@@ -19,15 +22,17 @@
 
 #define YMAX 10000
 #define XMAX 10000
-#define CORRMIN -1E3 // display min
-#define CORRMAX  1E3 // display max
-#define MASSMAX 50
+#define CORRMIN -1E4 // display min
+#define CORRMAX  1E4 // display max
+#define MASSMAX 500
 #define TIMESTEP 1
-#define POINTSIZE 3.0
-
+#define POINTSIZE 4.0
 
 #define BODYPROPCOUNT 7 //x,y,m,vx,vy,fx,fy
 #define GRAVITYCONST 6E-11
+#define RADIUSINVISIBLE 100 //two planets dont see each other when they are within this distance
+
+const int BLOCKSIZE = 1024; 
 
 //openGL Constants
 const int   SCREEN_WIDTH    = 400;
@@ -84,6 +89,8 @@ Body_ptr Galaxy;
 Points_ptr points;
 double resultTotal;
 int rounds;
+int algorithmChoice;
+int ManualNumBody;
 /**********************************************************************/
 
 //GPU
@@ -92,7 +99,7 @@ __global__
 void ComputeForce(data_t *Bodies, long int len) 
 {
   //a[threadIdx.x] += b[threadIdx.x];
-  int myid = blockIdx.x;
+  int myid = blockIdx.x * blockDim.x + threadIdx.x;
   int j;
   double x_dist,y_dist;
   double r_Squared;
@@ -104,7 +111,7 @@ void ComputeForce(data_t *Bodies, long int len)
   Bodies[myid + 5 *len] = 0;
   Bodies[myid + 6 *len] = 0;
 
-  for(j = 0 ; j< gridDim.x; j++){
+  for(j = 0 ; j< len; j++){
 
         if(myid!=j){
           
@@ -113,21 +120,21 @@ void ComputeForce(data_t *Bodies, long int len)
             r_Squared = (x_dist*x_dist)  + (y_dist*y_dist);
             dist = sqrt(r_Squared);
 
-            if(dist > 10){
+            if(dist > RADIUSINVISIBLE){
 
-              Force = (Bodies[myid + 2 * len] * Bodies[j + 2 * len] )/ (dist *dist * gridDim.x * gridDim.x * gridDim.x);
-              Bodies[myid] -= Force * x_dist ;/// dist;
-              Bodies[myid + len] -= Force * y_dist ;/// dist;
+              Force = (Bodies[myid + 2 * len] * Bodies[j + 2 * len] )/ (dist *dist * len /2);
+              Bodies[myid + 5 * len] -= Force * x_dist ;/// dist;
+              Bodies[myid + 6 * len] -= Force * y_dist ;/// dist;
 
             }
         }
   }
 
 
- __syncthreads();
+ //__syncthreads();
 
   for(j = 0 ; j< gridDim.x; j++){
-   Bodies[myid + 3 * len] += Bodies[myid + 5 * len]  * TIMESTEP / Bodies[myid + 2 * len];
+        Bodies[myid + 3*len] += Bodies[myid + 5 * len] * TIMESTEP/ Bodies[myid + 2 * len];
         Bodies[myid + 4*len] += Bodies[myid + 6 * len] * TIMESTEP/ Bodies[myid + 2 * len];
 
          Bodies[myid] += Bodies[myid + 3 * len] * TIMESTEP;
@@ -139,28 +146,18 @@ void ComputeForce(data_t *Bodies, long int len)
 
 
 
-
-
-
-
-
-
-
-
-
 /******************************************************************/
 main(int argc, char *argv[]){
 
 //iterative variable
-int i,j;
+int i;
 
 //variable declare
-int algorithmChoice;
-int ManualNumBody;
+
 
 //function declares
-struct timespec diff(struct timespec start, struct timespec end);
-struct timespec time1,time2,Diff;
+//struct timespec diff(struct timespec start, struct timespec end);
+//struct timespec time1,time2,Diff;
 Body_ptr new_galaxy(long int len);
 Points_ptr new_points(long int len);
 void display();
@@ -178,7 +175,7 @@ if (argc > 1)
     else algorithmChoice = 0;
 
 if(argc >= 2)
-        ManualNumBody = atoi( argv[2] );
+    ManualNumBody = atoi( argv[2] );
     else ManualNumBody = 200;
     
 
@@ -193,10 +190,11 @@ Galaxy = new_galaxy(ManualNumBody);
 // 	printf("\n");
 // }
 
-//brute force
+
+if(false){ // non cuda runs
 if( algorithmChoice == 0){
 
-
+//brute force
 	//clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time1);
     BruteForce(Galaxy);
     //clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time2);
@@ -206,6 +204,7 @@ if( algorithmChoice == 0){
 
 //bruteforce gpu
 if(algorithmChoice == 1){
+
     data_t *CBody;
     const int CSize = Galaxy->len * BODYPROPCOUNT * sizeof(Body_rec);
 
@@ -214,7 +213,7 @@ if(algorithmChoice == 1){
     cudaMemcpy(CBody, Galaxy->Bodies,CSize, cudaMemcpyHostToDevice);
 
     dim3 dimBlock(1,1);
-    dim3 dimGrid(this->numOfBodies,1);
+    dim3 dimGrid(ManualNumBody,1);
 
     ComputeForce<<<dimGrid,dimBlock>>>(CBody,Galaxy->len);
 
@@ -222,11 +221,9 @@ if(algorithmChoice == 1){
 
 
     cudaFree(CBody);
-
-
 }
 
-
+}
 
 //Create Points to show
 
@@ -247,8 +244,8 @@ points = new_points(ManualNumBody);
     for( i = 0; i < ManualNumBody; i++ )
     {
         
-        points->data[i].x = CORRMIN + Galaxy->Bodies[i];
-        points->data[i].y = CORRMIN + Galaxy->Bodies[i + ManualNumBody];
+        points->data[i].x = Galaxy->Bodies[i];
+        points->data[i].y = Galaxy->Bodies[i + ManualNumBody];
         points->data[i].r = rand()%255;
         points->data[i].g = rand()%255;
         points->data[i].b = rand()%255;
@@ -269,7 +266,7 @@ points = new_points(ManualNumBody);
 // create space
 Body_ptr new_galaxy(long int len){
 	//function declare
-	//int init_bodies_rand(Body_ptr v, long int len);
+	int init_bodies_rand(Body_ptr v, long int len);
  	int success;
 
 	//making the head object
@@ -383,8 +380,42 @@ void crunch(long int len){
      struct timespec time1, time2,result;
      clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time1);
     //run simulation
+     if(algorithmChoice == 0){
+	         BruteForce(Galaxy);
+     }
+     //run GPU
+     if(algorithmChoice == 1){
 
-	BruteForce(Galaxy);
+         data_t *CBody;
+         const int CSize = Galaxy->len * BODYPROPCOUNT * sizeof(data_t);
+
+         cudaMalloc( (void**)&CBody, CSize);
+
+          cudaMemcpy(CBody, Galaxy->Bodies,CSize, cudaMemcpyHostToDevice);
+
+          dim3 dimBlock(BLOCKSIZE,1);
+          dim3 dimGrid(ManualNumBody/BLOCKSIZE,1);
+
+          ComputeForce<<<dimGrid,dimBlock>>>(CBody,Galaxy->len);
+
+          cudaMemcpy(Galaxy->Bodies,CBody,CSize, cudaMemcpyDeviceToHost);
+          cudaFree(CBody);
+
+          cudaMalloc( (void**)&CBody, CSize);
+
+          cudaMemcpy(CBody, Galaxy->Bodies,CSize, cudaMemcpyHostToDevice);
+
+          //dim3 dimBlock(ManualNumBody%1024,1);
+          //dim3 dimGrid(1,1);
+
+          ComputeForce<<<1,ManualNumBody%BLOCKSIZE>>>(CBody,Galaxy->len);
+
+          cudaMemcpy(Galaxy->Bodies,CBody,CSize, cudaMemcpyDeviceToHost);
+          cudaFree(CBody);
+
+
+     }
+
 
      clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time2);
      result = diff(time1,time2);
@@ -393,22 +424,26 @@ void crunch(long int len){
      resultTotal = resultTotal;
      printf("CPU time:\t%.1f (msec)\n", resultTotal);
       //text
-     
-	int i;
-
-
+    
+    //reset display points 
+  	int i;
     for(  i = 0; i < len; i++ )
     {
         
-        points->data[i].x = CORRMIN + Galaxy->Bodies[i];
-        points->data[i].y = CORRMIN + Galaxy->Bodies[i + len];
-        points->data[i].r = 255;
-        points->data[i].g = 255;
+        points->data[i].x = CORRMAX/2-XMAX + Galaxy->Bodies[i];
+        points->data[i].y = CORRMAX/2-YMAX + Galaxy->Bodies[i + ManualNumBody];
+        points->data[i].r = abs( (unsigned char)(Galaxy->Bodies[i + 2 * ManualNumBody]) % 255);
+        points->data[i].g =  abs( (unsigned char)(Galaxy->Bodies[i + 2 * ManualNumBody]) % 255);
         points->data[i].b = 255;
-        points->data[i].a = 255;    
+        points->data[i].a = 255;
+
+    
+
     }        
 
 }
+
+
 void setupGL(){
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

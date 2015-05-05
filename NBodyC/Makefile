@@ -1,4 +1,5 @@
-OBJS = main.o 
+OBJS = main.cu
+OBJSCUDA = main.cu
 CC = gcc
 
 #cuda g++ version
@@ -23,8 +24,8 @@ OMPFLAG = -Xcompiler -fopenmp
 
 all: main
 
-main: $(OBJS)
-	$(CC)  $(OMPFLAG) $(LFLAGS) $(OBJS) -o main $(GLFLAGS) 
+main: $(OBJSCUDA)
+	$(NCC)  $(OMPFLAG) $(LFLAGS) $(OBJS) -o main $(GLFLAGS) 
 
 #NBody.o : NBody.h NBody.c
 #	$(NCC) $(NVLFAG) $(CFLAGS) Body.cu $(GLFLAGS) 
