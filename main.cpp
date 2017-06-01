@@ -13,14 +13,13 @@
 #include <sstream>
 #include <iomanip>
 
-
 #include "Body.h"
 #include "StartSimulation.h"
 
 
 
 #define GRIDSIDES 1000
-#define MAXMASS 300 // max mass a body cna get
+#define MAXMASS 200 // max mass a body cna get
 #define GalaxyX 1200 //0 to boundry
 #define GalaxyY 1000 // 0 to boundry
 #define CORRMIN -800 // display min
