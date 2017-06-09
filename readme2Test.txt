@@ -1,4 +1,2 @@
-
-This merges NewFeature 1
-This is newFeature2 readme
-merge into main branch
+main branch
+1) merged feature 1 & 2 
